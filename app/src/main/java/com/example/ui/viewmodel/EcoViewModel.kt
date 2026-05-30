@@ -443,8 +443,8 @@ class EcoViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private fun loadBitmapFromUri(context: Context, uri: Uri): Bitmap? {
-        return try {
+    private suspend fun loadBitmapFromUri(context: Context, uri: Uri): Bitmap? = withContext(Dispatchers.IO) {
+        try {
             val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
             BitmapFactory.decodeStream(inputStream)
         } catch (e: Exception) {
@@ -452,11 +452,11 @@ class EcoViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private fun encodeBitmapToBase64(bitmap: Bitmap): String {
+    private suspend fun encodeBitmapToBase64(bitmap: Bitmap): String = withContext(Dispatchers.IO) {
         val outputStream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 70, outputStream)
         val byteArray = outputStream.toByteArray()
-        return Base64.encodeToString(byteArray, Base64.NO_WRAP)
+        Base64.encodeToString(byteArray, Base64.NO_WRAP)
     }
 
     // --- Growth Prediction Logic ---
