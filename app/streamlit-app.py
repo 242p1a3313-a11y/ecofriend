@@ -45,11 +45,11 @@ st.markdown("""
         border: none;
     }
 </style>
-""", unsafe_type=True)
+""", unsafe_allow_html=True)
 
 # Application Logo & Title Sidebar
-st.sidebar.markdown("<h1 style='text-align: center; font-size: 2rem;'>🌱 EcoFriend</h1>", unsafe_type=True)
-st.sidebar.markdown("<p style='text-align: center; color: #475569;'>Your Smart AI-Powered Plantation Companion</p>", unsafe_type=True)
+st.sidebar.markdown("<h1 style='text-align: center; font-size: 2rem;'>🌱 EcoFriend</h1>", unsafe_allow_html=True)
+st.sidebar.markdown("<p style='text-align: center; color: #475569;'>Your Smart AI-Powered Plantation Companion</p>", unsafe_allow_html=True)
 st.sidebar.markdown("---")
 
 # Navigation Selector
@@ -73,8 +73,8 @@ else:
 
 # Core Functionality Modules
 if menu == "🏠 Dashboard":
-    st.markdown("<h1>Welcome, Plant Parent!</h1>", unsafe_type=True)
-    st.markdown("<h3>Your botanical status summary for today</h3>", unsafe_type=True)
+    st.markdown("<h1>Welcome, Plant Parent!</h1>", unsafe_allow_html=True)
+    st.markdown("<h3>Your botanical status summary for today</h3>", unsafe_allow_html=True)
     st.write("")
 
     col1, col2 = st.columns(2)
@@ -86,7 +86,7 @@ if menu == "🏠 Dashboard":
             <h2 style="margin: 0; color: #064E3B;">Your Aloe Vera is thriving!</h2>
             <p style="color: #16A34A; font-weight: 600; margin-top: 5px;">Next scheduled watering: In 2 days</p>
         </div>
-        """, unsafe_type=True)
+        """, unsafe_allow_html=True)
     with col2:
         st.markdown("""
         <div class="metric-card">
@@ -95,7 +95,7 @@ if menu == "🏠 Dashboard":
             <h2 style="margin: 0; color: #16A34A;">350 XP Points</h2>
             <p style="color: #475569; margin-top: 5px;">Doing great! You are in the top 15% of urban gardeners.</p>
         </div>
-        """, unsafe_type=True)
+        """, unsafe_allow_html=True)
 
     st.write("")
     st.markdown("### Featured Plant Recommendations")
@@ -110,7 +110,7 @@ if menu == "🏠 Dashboard":
             </div>
             <span style="background-color: #F0FDF4; color: #15803D; font-weight: bold; font-size: 11px; padding: 4px 10px; border-radius: 8px;">Easy</span>
         </div>
-        """, unsafe_type=True)
+        """, unsafe_allow_html=True)
     with colB:
         st.markdown("""
         <div style="background-color: #FFFFFF; border-radius: 16px; padding: 16px; border: 1px solid #E2E8F0; display: flex; align-items: center; gap: 12px;">
@@ -121,11 +121,11 @@ if menu == "🏠 Dashboard":
             </div>
             <span style="background-color: #EFF6FF; color: #1D4ED8; font-weight: bold; font-size: 11px; padding: 4px 10px; border-radius: 8px;">Medium</span>
         </div>
-        """, unsafe_type=True)
+        """, unsafe_allow_html=True)
 
 elif menu == "🔍 Disease Scan":
-    st.markdown("<h1>Leaf Disease Diagnoser</h1>", unsafe_type=True)
-    st.markdown("<p style='color:#475569;'>Upload clear photos of leaves showing symptoms to get scientific identification and treatment instructions.</p>", unsafe_type=True)
+    st.markdown("<h1>Leaf Disease Diagnoser</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='color:#475569;'>Upload clear photos of leaves showing symptoms to get scientific identification and treatment instructions.</p>", unsafe_allow_html=True)
     
     file_upload = st.file_uploader("Upload leaf snapshot (PNG, JPG, JPEG)", type=["png", "jpg", "jpeg"])
     
@@ -161,8 +161,8 @@ elif menu == "🔍 Disease Scan":
                             st.error(f"Error calling Gemini: {e}")
 
 elif menu == "💧 Water Logic":
-    st.markdown("<h1>Seasonal Smart Water Logic</h1>", unsafe_type=True)
-    st.markdown("<p style='color:#475569;'>Calculate complex custom hydration routines tailored to regional dynamics, seasonal weather variations, and soil absorption attributes.</p>", unsafe_type=True)
+    st.markdown("<h1>Seasonal Smart Water Logic</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='color:#475569;'>Calculate complex custom hydration routines tailored to regional dynamics, seasonal weather variations, and soil absorption attributes.</p>", unsafe_allow_html=True)
 
     col1, col2 = st.columns(2)
     with col1:
@@ -198,8 +198,8 @@ elif menu == "💧 Water Logic":
         st.info("💡 Tip: Always feel the top 1 inch of soil. If it feels completely dry, irrigate immediately regardless of schedule calculation.")
 
 elif menu == "🤖 Chat with Prakriti":
-    st.markdown("<h1>Prakriti Botanical Assistant</h1>", unsafe_type=True)
-    st.markdown("<p style='color:#475569;'>Interactive trilingual advisory chatbot supporting botanical consulting in English, Tamil, and Hindi.</p>", unsafe_type=True)
+    st.markdown("<h1>Prakriti Botanical Assistant</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='color:#475569;'>Interactive trilingual advisory chatbot supporting botanical consulting in English, Tamil, and Hindi.</p>", unsafe_allow_html=True)
 
     # Initialize chat history
     if "messages" not in st.session_state:
@@ -234,8 +234,8 @@ elif menu == "🤖 Chat with Prakriti":
                         st.error(f"Error querying chatbot: {e}")
 
 elif menu == "🪴 Recommend Plants":
-    st.markdown("<h1>Personalized Bio-Compatibility Recommendations</h1>", unsafe_type=True)
-    st.markdown("<p style='color:#475569;'>Let Gemini recommend perfectly compatible houseplants matching your unique living spaces, maintenance experience level, and geographic zone.</p>", unsafe_type=True)
+    st.markdown("<h1>Personalized Bio-Compatibility Recommendations</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='color:#475569;'>Let Gemini recommend perfectly compatible houseplants matching your unique living spaces, maintenance experience level, and geographic zone.</p>", unsafe_allow_html=True)
 
     experience = st.select_slider("Select your gardening skills level", options=["Absolute Beginner", "Novice Developer", "Experienced Enthusiast", "Master Botanist"])
     placement = st.radio("Primary placement target location", ["Shaded Indoors / Bedroom", "Bright Living Room (Indirect Light)", "Balcony / Full Sun Outdoors", "High Humid Bathroom Environment"])

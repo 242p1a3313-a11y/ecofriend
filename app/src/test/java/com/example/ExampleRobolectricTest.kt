@@ -1,21 +1,22 @@
 package com.example
 
-import android.content.Context
-import androidx.test.core.app.ApplicationProvider
-import org.junit.Assert.assertEquals
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
 
 @RunWith(RobolectricTestRunner::class)
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [36])
 class ExampleRobolectricTest {
 
-  @Test
-  fun `read string from context`() {
-    val context = ApplicationProvider.getApplicationContext<Context>()
-    val appName = context.getString(R.string.app_name)
-    assertEquals("EcoFriend", appName)
-  }
+    @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
+
+    @Test
+    fun testActivityStartup() {
+        composeTestRule.waitForIdle()
+    }
 }
