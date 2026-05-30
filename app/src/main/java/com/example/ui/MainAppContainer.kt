@@ -19,6 +19,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
@@ -35,6 +36,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.example.ui.theme.*
 import com.example.ui.viewmodel.EcoViewModel
 import com.example.ui.viewmodel.PlantResult
 import com.example.ui.viewmodel.DiseaseScanResult
@@ -70,69 +72,98 @@ fun MainAppContainer(
 
     Scaffold(
         bottomBar = {
-            NavigationBar(
+            Surface(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .testTag("bottom_nav_bar")
-                    .windowInsetsPadding(WindowInsets.navigationBars),
-                containerColor = MaterialTheme.colorScheme.surface,
-                tonalElevation = 8.dp
+                    .testTag("bottom_nav_bar"),
+                color = SleekWhiteSurface,
+                shadowElevation = 12.dp,
+                border = BorderStroke(1.dp, SleekSlate100)
             ) {
-                listOf(
-                    NavTabItem(NavTab.HOME, "Home", Icons.Default.Home, "home_tab"),
-                    NavTabItem(NavTab.RECOMMEND, "Recommend", Icons.Default.Eco, "recommend_tab"),
-                    NavTabItem(NavTab.SCAN, "Scan", Icons.Default.CameraAlt, "scan_tab"),
-                    NavTabItem(NavTab.GROWTH, "Growth", Icons.Default.TrendingUp, "growth_tab"),
-                    NavTabItem(NavTab.CHATBOT, "Prakriti", Icons.Default.Forum, "chatbot_tab"),
-                    NavTabItem(NavTab.PROFILE, "Profile", Icons.Default.Person, "profile_tab")
-                ).forEach { item ->
-                    val isSelected = currentTab == item.tab
-                    NavigationBarItem(
-                        selected = isSelected,
-                        onClick = { currentTab = item.tab },
-                        icon = {
-                            Icon(
-                                imageVector = item.icon,
-                                contentDescription = item.label,
-                                tint = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                                modifier = Modifier.size(24.dp)
-                            )
-                        },
-                        label = {
-                            Text(
-                                text = item.label,
-                                style = MaterialTheme.typography.bodyMedium.copy(
-                                    fontSize = 11.sp,
-                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-                                )
-                            )
-                        },
-                        modifier = Modifier.testTag(item.testTag)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .navigationBarsPadding()
+                        .padding(horizontal = 8.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Item 1: Home
+                    BottomNavItem(
+                        selected = currentTab == NavTab.HOME,
+                        onClick = { currentTab = NavTab.HOME },
+                        icon = Icons.Default.Home,
+                        label = "Home",
+                        testTag = "home_tab",
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    // Item 2: Suggest / Recommend
+                    BottomNavItem(
+                        selected = currentTab == NavTab.RECOMMEND,
+                        onClick = { currentTab = NavTab.RECOMMEND },
+                        icon = Icons.Default.Eco,
+                        label = "Suggest",
+                        testTag = "recommend_tab",
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    // Item 3: Center floating circular Scanner button
+                    Box(
+                        modifier = Modifier
+                            .weight(1.2f)
+                            .wrapContentHeight(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .offset(y = (-10).dp)
+                                .size(56.dp)
+                                .background(SleekGreenPrimary, CircleShape)
+                                .border(4.dp, Color.White, CircleShape)
+                                .clickable { currentTab = NavTab.SCAN }
+                                .testTag("scan_tab"),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("📷", fontSize = 22.sp)
+                        }
+                    }
+
+                    // Item 4: Prakriti Chatbot
+                    BottomNavItem(
+                        selected = currentTab == NavTab.CHATBOT,
+                        onClick = { currentTab = NavTab.CHATBOT },
+                        icon = Icons.Default.Forum,
+                        label = "Chat",
+                        testTag = "chatbot_tab",
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    // Item 5: Profile
+                    BottomNavItem(
+                        selected = currentTab == NavTab.PROFILE,
+                        onClick = { currentTab = NavTab.PROFILE },
+                        icon = Icons.Default.Person,
+                        label = "Profile",
+                        testTag = "profile_tab",
+                        modifier = Modifier.weight(1f)
                     )
                 }
             }
         }
     ) { innerPadding ->
-        // Premium gradient background for the nature green vibe
+        // Premium sage-cool gradient background matching sleek HTML palette
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            MaterialTheme.colorScheme.background,
-                            MaterialTheme.colorScheme.background.copy(alpha = 0.9f),
-                            MaterialTheme.colorScheme.surface.copy(alpha = 0.15f)
-                        )
-                    )
-                )
+                .background(SleekBackground)
                 .padding(innerPadding)
         ) {
             // Background Leaf Accents (Decorative only)
             Icon(
                 imageVector = Icons.Default.Eco,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.05f),
+                tint = SleekGreenPrimary.copy(alpha = 0.04f),
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .offset(x = 40.dp, y = 20.dp)
@@ -143,7 +174,7 @@ fun MainAppContainer(
             Icon(
                 imageVector = Icons.Default.Yard,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.secondary.copy(alpha = 0.03f),
+                tint = SleekEmeraldDark.copy(alpha = 0.03f),
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .offset(x = (-30).dp, y = (-20).dp)
@@ -159,24 +190,128 @@ fun MainAppContainer(
                     }
                 )
             } else {
-                AnimatedContent(
-                    targetState = currentTab,
-                    transitionSpec = {
-                        fadeIn(animationSpec = tween(220)) with fadeOut(animationSpec = tween(220))
-                    },
-                    label = "main_router"
-                ) { target ->
-                    when (target) {
-                        NavTab.HOME -> HomeScreen(viewModel, onNavigate = { currentTab = it })
-                        NavTab.RECOMMEND -> RecommendScreen(viewModel)
-                        NavTab.SCAN -> ScanScreen(viewModel)
-                        NavTab.GROWTH -> GrowthScreen(viewModel)
-                        NavTab.CHATBOT -> ChatbotScreen(viewModel)
-                        NavTab.PROFILE -> ProfileScreen(viewModel)
+                Column(modifier = Modifier.fillMaxSize()) {
+                    // Global Sleek Header inside the screen
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        color = SleekWhiteSurface.copy(alpha = 0.9f),
+                        tonalElevation = 1.dp,
+                        border = BorderStroke(1.dp, SleekSlate100.copy(alpha = 0.5f))
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .statusBarsPadding()
+                                .padding(horizontal = 20.dp, vertical = 12.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(34.dp)
+                                        .background(SleekGreenPrimary, RoundedCornerShape(10.dp)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text("🌱", fontSize = 18.sp)
+                                }
+                                Text(
+                                    text = "EcoFriend",
+                                    style = MaterialTheme.typography.titleMedium.copy(
+                                        fontWeight = FontWeight.Bold,
+                                        color = SleekGreen900,
+                                        fontSize = 20.sp,
+                                        letterSpacing = (-0.5).sp
+                                    )
+                                )
+                            }
+
+                            // Profile bubble wrapper
+                            Box(
+                                modifier = Modifier
+                                    .size(38.dp)
+                                    .background(SleekGreen50, CircleShape)
+                                    .border(2.dp, Color.White, CircleShape)
+                                    .clickable { currentTab = NavTab.PROFILE },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(text = "👤", fontSize = 16.sp)
+                            }
+                        }
+                    }
+
+                    // Active target subscreen viewport
+                    Box(modifier = Modifier.weight(1f)) {
+                        AnimatedContent(
+                            targetState = currentTab,
+                            transitionSpec = {
+                                fadeIn(animationSpec = tween(220)) togetherWith fadeOut(animationSpec = tween(220))
+                            },
+                            label = "main_router"
+                        ) { target ->
+                            when (target) {
+                                NavTab.HOME -> HomeScreen(viewModel, onNavigate = { currentTab = it })
+                                NavTab.RECOMMEND -> RecommendScreen(viewModel)
+                                NavTab.SCAN -> ScanScreen(viewModel)
+                                NavTab.GROWTH -> GrowthScreen(viewModel)
+                                NavTab.CHATBOT -> ChatbotScreen(viewModel)
+                                NavTab.PROFILE -> ProfileScreen(viewModel)
+                            }
+                        }
                     }
                 }
             }
         }
+    }
+}
+
+// --- Sleek Custom Recommend Data Model ---
+data class SleekRecommendItem(
+    val title: String,
+    val subtitle: String,
+    val difficulty: String,
+    val emoji: String,
+    val emojiBg: Color,
+    val tagText: Color,
+    val tagBg: Color
+)
+
+@Composable
+fun BottomNavItem(
+    selected: Boolean,
+    onClick: () -> Unit,
+    icon: ImageVector,
+    label: String,
+    testTag: String,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .clickable(onClick = onClick)
+            .padding(vertical = 4.dp)
+            .testTag(testTag),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = label,
+            tint = if (selected) SleekGreenPrimary else SleekSlate600.copy(alpha = 0.6f),
+            modifier = Modifier.size(22.dp)
+        )
+        Spacer(modifier = Modifier.height(2.dp))
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodySmall.copy(
+                fontSize = 10.sp,
+                fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
+                color = if (selected) SleekGreenPrimary else SleekSlate600.copy(alpha = 0.6f),
+                letterSpacing = 0.2.sp
+            )
+        )
     }
 }
 
@@ -213,43 +348,47 @@ fun AuthScreen(onRegister: (String, String) -> Unit) {
         Icon(
             imageVector = Icons.Default.Eco,
             contentDescription = "EcoFriend Logo",
-            tint = MaterialTheme.colorScheme.primary,
+            tint = SleekGreenPrimary,
             modifier = Modifier
-                .size(72.dp)
-                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), CircleShape)
-                .padding(12.dp)
+                .size(76.dp)
+                .background(SleekGreen100.copy(alpha = 0.5f), CircleShape)
+                .border(2.dp, SleekGreenPrimary.copy(alpha = 0.5f), CircleShape)
+                .padding(14.dp)
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "Welcome to EcoFriend",
+            text = "EcoFriend",
             style = MaterialTheme.typography.titleLarge.copy(
                 fontWeight = FontWeight.Bold,
-                fontSize = 28.sp,
-                color = MaterialTheme.colorScheme.primary
+                fontSize = 32.sp,
+                color = SleekGreen900,
+                letterSpacing = (-0.5).sp
             ),
             textAlign = TextAlign.Center
         )
         Text(
-            text = "Your AI-Powered Green Companion 🌱",
+            text = "Your AI-Powered Smart Plantation Companion 🌱",
             style = MaterialTheme.typography.bodyMedium.copy(
                 fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.secondary
+                color = SleekSlate600,
+                fontSize = 14.sp
             ),
             textAlign = TextAlign.Center
         )
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Glassmorphism login panel
+        // Sleek Theme input panel card
         Card(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(2.dp),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f)
+                containerColor = SleekWhiteSurface
             ),
-            shape = RoundedCornerShape(24.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            shape = RoundedCornerShape(28.dp),
+            border = BorderStroke(1.dp, SleekSlate100),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
             Column(
                 modifier = Modifier
@@ -259,8 +398,12 @@ fun AuthScreen(onRegister: (String, String) -> Unit) {
             ) {
                 Text(
                     text = if (isSigningUp) "Create New Account" else "Sign In to Continue",
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    modifier = Modifier.padding(bottom = 16.dp)
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = SleekSlate900,
+                        fontSize = 18.sp
+                    ),
+                    modifier = Modifier.padding(bottom = 20.dp)
                 )
 
                 if (isSigningUp) {
@@ -268,11 +411,17 @@ fun AuthScreen(onRegister: (String, String) -> Unit) {
                         value = name,
                         onValueChange = { name = it },
                         label = { Text("Display Name") },
-                        leadingIcon = { Icon(Icons.Default.Person, null) },
+                        leadingIcon = { Icon(Icons.Default.Person, null, tint = SleekSlate600.copy(alpha = 0.7f)) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .testTag("name_input"),
                         singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = SleekGreenPrimary,
+                            unfocusedBorderColor = SleekSlate100,
+                            focusedLabelColor = SleekGreenPrimary,
+                            unfocusedLabelColor = SleekSlate600
+                        ),
                         shape = RoundedCornerShape(12.dp)
                     )
                     Spacer(modifier = Modifier.height(12.dp))
@@ -282,12 +431,18 @@ fun AuthScreen(onRegister: (String, String) -> Unit) {
                     value = email,
                     onValueChange = { email = it },
                     label = { Text("Email Address") },
-                    leadingIcon = { Icon(Icons.Default.Email, null) },
+                    leadingIcon = { Icon(Icons.Default.Email, null, tint = SleekSlate600.copy(alpha = 0.7f)) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .testTag("email_input"),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = SleekGreenPrimary,
+                        unfocusedBorderColor = SleekSlate100,
+                        focusedLabelColor = SleekGreenPrimary,
+                        unfocusedLabelColor = SleekSlate600
+                    ),
                     shape = RoundedCornerShape(12.dp)
                 )
                 Spacer(modifier = Modifier.height(12.dp))
@@ -296,19 +451,25 @@ fun AuthScreen(onRegister: (String, String) -> Unit) {
                     value = password,
                     onValueChange = { password = it },
                     label = { Text("Secret Password") },
-                    leadingIcon = { Icon(Icons.Default.Lock, null) },
+                    leadingIcon = { Icon(Icons.Default.Lock, null, tint = SleekSlate600.copy(alpha = 0.7f)) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .testTag("password_input"),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = SleekGreenPrimary,
+                        unfocusedBorderColor = SleekSlate100,
+                        focusedLabelColor = SleekGreenPrimary,
+                        unfocusedLabelColor = SleekSlate600
+                    ),
                     shape = RoundedCornerShape(12.dp)
                 )
 
                 if (errorMessage.isNotBlank()) {
                     Text(
                         text = errorMessage,
-                        color = MaterialTheme.colorScheme.error,
+                        color = Color(0xFFEF4444),
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.padding(top = 8.dp)
                     )
@@ -330,14 +491,14 @@ fun AuthScreen(onRegister: (String, String) -> Unit) {
                         .fillMaxWidth()
                         .height(52.dp)
                         .testTag("login_submit_button"),
-                    shape = RoundedCornerShape(16.dp),
+                    shape = RoundedCornerShape(14.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary
+                        containerColor = SleekGreenPrimary,
+                        contentColor = Color.White
                     )
                 ) {
                     Text(
                         text = if (isSigningUp) "Sign Up 🌱" else "Secure Login 🔑",
-                        color = MaterialTheme.colorScheme.onPrimary,
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp
                     )
@@ -350,7 +511,7 @@ fun AuthScreen(onRegister: (String, String) -> Unit) {
                 ) {
                     Text(
                         text = if (isSigningUp) "Already have an account? Sign In" else "New to EcoFriend? Create Account",
-                        color = MaterialTheme.colorScheme.primary,
+                        color = SleekGreenPrimary,
                         fontWeight = FontWeight.SemiBold
                     )
                 }
@@ -375,149 +536,342 @@ fun HomeScreen(
             .padding(16.dp)
             .verticalScroll(listState)
     ) {
-        // Welcoming Headline with user points card
+        // Welcoming Headline with sleek premium green gradient card
         Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.9f)
-            ),
-            shape = RoundedCornerShape(20.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 12.dp),
+            shape = RoundedCornerShape(24.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
-            Row(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(20.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                    .background(
+                        Brush.linearGradient(
+                            colors = listOf(SleekGreenPrimary, SleekEmeraldDark)
+                        )
+                    )
             ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = "Hello, ${user?.name ?: "Gardener"}!",
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            fontSize = 22.sp
-                        )
-                    )
-                    Text(
-                        text = "Your gardening points level looks high today! Keep gardening.",
-                        style = MaterialTheme.typography.bodySmall.copy(
-                            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
-                        )
-                    )
-                }
+                // Background Translucent Leaf Decorative
+                Text(
+                    text = "🌿",
+                    fontSize = 110.sp,
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .offset(x = 12.dp, y = 24.dp)
+                        .alpha(0.14f)
+                        .rotate(12f)
+                )
 
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Box(
-                        modifier = Modifier
-                            .background(MaterialTheme.colorScheme.primary, CircleShape)
-                            .size(52.dp),
-                        contentAlignment = Alignment.Center
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp)
+                ) {
+                    Text(
+                        text = "PRAKRITIMITRA AI",
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            color = SleekGreen100,
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = 1.2.sp
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "Your Aloe Vera is\nthriving today!",
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 24.sp,
+                            lineHeight = 31.sp
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "Welcome, ${user?.name ?: "Gardener"}! • ${user?.points ?: 0} XP level active",
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            color = Color.White.copy(alpha = 0.85f),
+                            fontWeight = FontWeight.Medium
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Button(
+                        onClick = { onNavigate(NavTab.GROWTH) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White.copy(alpha = 0.18f),
+                            contentColor = Color.White
+                        ),
+                        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.35f)),
+                        shape = RoundedCornerShape(12.dp),
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
                     ) {
                         Text(
-                            text = "${user?.points ?: 0}",
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onPrimary
+                            text = "Check Growth Plan",
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 13.sp
                             )
                         )
                     }
-                    Text(
-                        text = "XP Points",
-                        style = MaterialTheme.typography.bodySmall.copy(
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 11.sp,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                    )
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-        // Trilingual commands cheat box for accessibility
+        // Grid sections based on Sleek columns
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            // Disease Scan Card
+            Card(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(130.dp)
+                    .clickable { onNavigate(NavTab.SCAN) },
+                shape = RoundedCornerShape(24.dp),
+                colors = CardDefaults.cardColors(containerColor = SleekWhiteSurface),
+                border = BorderStroke(1.dp, SleekSlate100)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(38.dp)
+                            .background(SleekOrangeBg, RoundedCornerShape(12.dp)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("🔍", fontSize = 18.sp)
+                    }
+
+                    Column {
+                        Text(
+                            text = "Disease Scan",
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                fontWeight = FontWeight.Bold,
+                                color = SleekSlate900
+                            )
+                        )
+                        Text(
+                            text = "Identify leaf issues",
+                            style = MaterialTheme.typography.bodySmall.copy(
+                                fontSize = 10.sp,
+                                color = SleekSlate600
+                            )
+                        )
+                    }
+                }
+            }
+
+            // Water Logic Card
+            Card(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(130.dp)
+                    .clickable { onNavigate(NavTab.RECOMMEND) },
+                shape = RoundedCornerShape(24.dp),
+                colors = CardDefaults.cardColors(containerColor = SleekWhiteSurface),
+                border = BorderStroke(1.dp, SleekSlate100)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(38.dp)
+                            .background(SleekBlueBg, RoundedCornerShape(12.dp)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("💧", fontSize = 18.sp)
+                    }
+
+                    Column {
+                        Text(
+                            text = "Water Logic",
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                fontWeight = FontWeight.Bold,
+                                color = SleekSlate900
+                            )
+                        )
+                        Text(
+                            text = "Smart scheduling",
+                            style = MaterialTheme.typography.bodySmall.copy(
+                                fontSize = 10.sp,
+                                color = SleekSlate600
+                            )
+                        )
+                    }
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        // Recommended Cards Section
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
+            shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.cardColors(containerColor = SleekWhiteSurface),
+            border = BorderStroke(1.dp, SleekSlate100)
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Recommended for you",
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = SleekSlate900
+                        )
+                    )
+                    Text(
+                        text = "View All",
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = SleekGreenPrimary
+                        ),
+                        modifier = Modifier.clickable { onNavigate(NavTab.RECOMMEND) }
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                listOf(
+                    SleekRecommendItem("Snake Plant", "98% Compatibility", "Easy", "🪴", Color(0xFFDCFCE7), Color(0xFF15803D), Color(0xFFF0FDF4)),
+                    SleekRecommendItem("Jade Succulent", "84% Compatibility", "Medium", "🌵", Color(0xFFFEF3C7), Color(0xFF1D4ED8), Color(0xFFEFF6FF))
+                ).forEach { item ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
+                            .clickable { onNavigate(NavTab.RECOMMEND) },
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = SleekSlate50),
+                        border = BorderStroke(1.dp, SleekSlate100.copy(alpha = 0.5f))
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(44.dp)
+                                    .background(item.emojiBg, RoundedCornerShape(12.dp)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(item.emoji, fontSize = 20.sp)
+                            }
+
+                            Spacer(modifier = Modifier.width(12.dp))
+
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = item.title,
+                                    style = MaterialTheme.typography.bodyMedium.copy(
+                                        fontWeight = FontWeight.Bold,
+                                        color = SleekSlate900
+                                    )
+                                )
+                                Text(
+                                    text = item.subtitle,
+                                    style = MaterialTheme.typography.bodySmall.copy(
+                                        fontSize = 11.sp,
+                                        color = SleekSlate600
+                                    )
+                                )
+                            }
+
+                            Box(
+                                modifier = Modifier
+                                    .background(item.tagBg, RoundedCornerShape(8.dp))
+                                    .padding(horizontal = 10.dp, vertical = 4.dp)
+                            ) {
+                                Text(
+                                    text = item.difficulty,
+                                    color = item.tagText,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Trilingual assistant (preserved accessibility module)
         Text(
             text = "🌐 Trilingual Quick Assist Commands",
-            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold, color = SleekSlate900),
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
         Card(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+            shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.cardColors(containerColor = SleekWhiteSurface),
+            border = BorderStroke(1.dp, SleekSlate100)
         ) {
             Column(modifier = Modifier.padding(12.dp)) {
                 listOf(
                     TrilingualCmd("Recommend Plant", "మొక్క సూచించు", "पौधा सुझाओ", NavTab.RECOMMEND),
                     TrilingualCmd("Detect Disease", "வ్యాధి గుర్తించు", "रोग पहचानो", NavTab.SCAN),
                     TrilingualCmd("Growth Prediction", "పెరుగుదల అంచనా", "वृद्धि अनुमान", NavTab.GROWTH)
-                ).forEach { item ->
+                ).forEachIndexed { index, item ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable { onNavigate(item.targetTab) }
-                            .padding(vertical = 10.dp, horizontal = 4.dp),
+                            .padding(vertical = 12.dp, horizontal = 8.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.Eco, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
+                            Icon(Icons.Default.Eco, null, tint = SleekGreenPrimary, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text(item.en, style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold))
+                            Text(item.en, style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold, color = SleekSlate900))
                         }
                         Text(
                             text = "${item.te} • ${item.hi}",
                             style = MaterialTheme.typography.bodySmall.copy(
-                                color = MaterialTheme.colorScheme.secondary,
+                                color = SleekSlate600,
                                 fontWeight = FontWeight.Medium
                             )
                         )
                     }
-                    HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.06f))
+                    if (index < 2) {
+                        HorizontalDivider(color = SleekSlate100, modifier = Modifier.padding(horizontal = 8.dp))
+                    }
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        // Quick feature navigators
-        Text(
-            text = "🌿 Smart Care Modules",
-            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            ModuleCard(
-                title = "Disease Scan",
-                description = "Scan leaf spots via AI",
-                icon = Icons.Default.CameraAlt,
-                color = MaterialTheme.colorScheme.secondary,
-                modifier = Modifier.weight(1f),
-                onClick = { onNavigate(NavTab.SCAN) }
-            )
-
-            ModuleCard(
-                title = "Water Calc",
-                description = "Seasonal schedules",
-                icon = Icons.Default.WaterDrop,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.weight(1f),
-                onClick = { onNavigate(NavTab.RECOMMEND) }
-            )
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        // History logs
+        // History logs styled elegantly like recommended lists
         Text(
             text = "📅 Plant Diagnostics History (${scans.size})",
-            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold, color = SleekSlate900),
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
@@ -526,15 +880,16 @@ fun HomeScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(120.dp)
-                    .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.5f), RoundedCornerShape(16.dp)),
+                    .background(SleekWhiteSurface, RoundedCornerShape(24.dp))
+                    .border(1.dp, SleekSlate100, RoundedCornerShape(24.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Icon(Icons.Default.CloudQueue, null, tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f))
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Icon(Icons.Default.CloudQueue, null, tint = SleekSlate600.copy(alpha = 0.4f), modifier = Modifier.size(28.dp))
+                    Spacer(modifier = Modifier.height(6.dp))
                     Text(
                         "No diagnostics run yet. Tap Scan to detect diseases!",
-                        style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
+                        style = MaterialTheme.typography.bodySmall.copy(color = SleekSlate600)
                     )
                 }
             }
@@ -543,34 +898,36 @@ fun HomeScreen(
                 scans.take(4).forEach { scan ->
                     Card(
                         modifier = Modifier.fillMaxWidth(),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                        colors = CardDefaults.cardColors(containerColor = SleekWhiteSurface),
+                        shape = RoundedCornerShape(24.dp),
+                        border = BorderStroke(1.dp, SleekSlate100)
                     ) {
                         Row(
-                            modifier = Modifier.padding(12.dp),
+                            modifier = Modifier.padding(14.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Box(
                                 modifier = Modifier
                                     .size(44.dp)
                                     .background(
-                                        if (scan.confidence > 90) MaterialTheme.colorScheme.error.copy(alpha = 0.1f)
-                                        else MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f),
-                                        CircleShape
+                                        if (scan.confidence > 90) Color(0xFFFEE2E2)
+                                        else Color(0xFFEFF6FF),
+                                        RoundedCornerShape(12.dp)
                                     ),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.BugReport,
                                     contentDescription = null,
-                                    tint = if (scan.confidence > 90) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.secondary
+                                    tint = if (scan.confidence > 90) Color(0xFFEF4444) else Color(0xFF3B82F6)
                                 )
                             }
                             Spacer(modifier = Modifier.width(12.dp))
                             Column(modifier = Modifier.weight(1f)) {
-                                Text(scan.diseaseName, style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold))
+                                Text(scan.diseaseName, style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold, color = SleekSlate900))
                                 Text(
                                     text = "Confidence Level: ${scan.confidence}%",
-                                    style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.secondary)
+                                    style = MaterialTheme.typography.bodySmall.copy(color = SleekSlate600)
                                 )
                             }
                         }
@@ -596,7 +953,9 @@ fun ModuleCard(
         modifier = modifier
             .height(130.dp)
             .clickable { onClick() },
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        colors = CardDefaults.cardColors(containerColor = SleekWhiteSurface),
+        shape = RoundedCornerShape(24.dp),
+        border = BorderStroke(1.dp, SleekSlate100)
     ) {
         Column(
             modifier = Modifier

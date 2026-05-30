@@ -14,9 +14,9 @@ import androidx.compose.ui.graphics.Color
 
 private val DarkColorScheme =
   darkColorScheme(
-    primary = MintAccentGreen,
-    secondary = TeaGreenColor,
-    tertiary = SageOutlineGo,
+    primary = SleekGreenPrimary,
+    secondary = SleekGreen500,
+    tertiary = SleekSlate600,
     background = ForestDeepGreen,
     surface = EmeraldMediumGreen,
     onPrimary = ForestDeepGreen,
@@ -26,21 +26,21 @@ private val DarkColorScheme =
 
 private val LightColorScheme =
   lightColorScheme(
-    primary = OliveJadeGreen,
-    secondary = MintAccentGreen,
-    tertiary = SageOutlineGo,
-    background = LightMossBG,
-    surface = CreamOrganic,
+    primary = SleekGreenPrimary,
+    secondary = SleekEmeraldDark,
+    tertiary = SleekSlate600,
+    background = SleekBackground,
+    surface = SleekWhiteSurface,
     onPrimary = Color.White,
-    onBackground = ForestDeepGreen,
-    onSurface = ForestDeepGreen
+    onBackground = SleekSlate900,
+    onSurface = SleekSlate900
   )
 
 @Composable
 fun MyApplicationTheme(
   darkTheme: Boolean = isSystemInDarkTheme(),
-  // Dynamic color is available on Android 12+
-  dynamicColor: Boolean = true,
+  // Dynamic color is disabled by default to show our pristine custom palette
+  dynamicColor: Boolean = false,
   content: @Composable () -> Unit,
 ) {
   val colorScheme =
