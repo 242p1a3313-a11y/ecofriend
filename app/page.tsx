@@ -1,37 +1,119 @@
-export default function Page() {
-  return (
-    <main className="flex min-h-screen items-center justify-center bg-black px-6 text-neutral-400">
-      <div className="flex w-full max-w-md flex-col items-start gap-8">
-        <svg
-          fill="currentColor"
-          viewBox="0 0 147 70"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-          className="size-10 text-white"
-        >
-          <path d="M56 50.2031V14H70V60.1562C70 65.5928 65.5928 70 60.1562 70C57.5605 70 54.9982 68.9992 53.1562 67.1573L0 14H19.7969L56 50.2031Z" />
-          <path d="M147 56H133V23.9531L100.953 56H133V70H96.6875C85.8144 70 77 61.1856 77 50.3125V14H91V46.1562L123.156 14H91V0H127.312C138.186 0 147 8.81439 147 19.6875V56Z" />
-        </svg>
+import Link from 'next/link'
+import { headers } from 'next/headers'
+import { auth } from '@/lib/auth'
+import { Button } from '@/components/ui/button'
+import { HeroSection } from '@/components/landing/hero-section'
+import { FeaturesSection } from '@/components/landing/features-section'
+import { HowItWorksSection } from '@/components/landing/how-it-works-section'
+import { TestimonialsSection } from '@/components/landing/testimonials-section'
+import { CTASection } from '@/components/landing/cta-section'
+import { Footer } from '@/components/landing/footer'
+import { Leaf, Menu, X } from 'lucide-react'
 
-        <div className="space-y-3">
-          <h1 className="text-balance text-2xl font-semibold tracking-tight text-white">
-            To get started, describe what you want to build.
-          </h1>
-          <p className="text-pretty text-sm leading-relaxed text-neutral-500">
-            This is the default page for a fresh v0 project. Open the prompt and
-            tell v0 what to create, or browse the{' '}
-            <a
-              href="https://v0.app/templates"
-              target="_blank"
-              rel="noreferrer"
-              className="text-neutral-300 underline underline-offset-4 hover:text-white"
-            >
-              Community
-            </a>{' '}
-            for inspiration.
-          </p>
+export default async function HomePage() {
+  const session = await auth.api.getSession({ headers: await headers() })
+  const isLoggedIn = !!session?.user
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Header isLoggedIn={isLoggedIn} />
+      <main>
+        <HeroSection isLoggedIn={isLoggedIn} />
+        <FeaturesSection />
+        <HowItWorksSection />
+        <TestimonialsSection />
+        <CTASection isLoggedIn={isLoggedIn} />
+      </main>
+      <Footer />
+    </div>
+  )
+}
+
+function Header({ isLoggedIn }: { isLoggedIn: boolean }) {
+  return (
+    <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        <Link href="/" className="flex items-center gap-2">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary">
+            <Leaf className="h-5 w-5 text-primary-foreground" />
+          </div>
+          <span className="text-xl font-bold text-foreground">EcoFriend</span>
+        </Link>
+
+        <div className="hidden items-center gap-8 md:flex">
+          <Link href="#features" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+            Features
+          </Link>
+          <Link href="#how-it-works" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+            How It Works
+          </Link>
+          <Link href="#testimonials" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+            Testimonials
+          </Link>
         </div>
-      </div>
-    </main>
+
+        <div className="hidden items-center gap-4 md:flex">
+          {isLoggedIn ? (
+            <Button asChild className="bg-primary hover:bg-primary/90">
+              <Link href="/dashboard">Go to Dashboard</Link>
+            </Button>
+          ) : (
+            <>
+              <Button variant="ghost" asChild className="text-muted-foreground hover:text-foreground">
+                <Link href="/sign-in">Sign In</Link>
+              </Button>
+              <Button asChild className="bg-primary hover:bg-primary/90">
+                <Link href="/sign-up">Get Started</Link>
+              </Button>
+            </>
+          )}
+        </div>
+
+        {/* Mobile menu would go here */}
+        <MobileNav isLoggedIn={isLoggedIn} />
+      </nav>
+    </header>
+  )
+}
+
+function MobileNav({ isLoggedIn }: { isLoggedIn: boolean }) {
+  return (
+    <div className="md:hidden">
+      <details className="group relative">
+        <summary className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg hover:bg-muted list-none">
+          <Menu className="h-5 w-5 text-foreground group-open:hidden" />
+          <X className="hidden h-5 w-5 text-foreground group-open:block" />
+        </summary>
+        <div className="absolute right-0 top-12 w-64 rounded-lg border border-border bg-card p-4 shadow-lg">
+          <div className="flex flex-col gap-4">
+            <Link href="#features" className="text-sm font-medium text-muted-foreground hover:text-foreground">
+              Features
+            </Link>
+            <Link href="#how-it-works" className="text-sm font-medium text-muted-foreground hover:text-foreground">
+              How It Works
+            </Link>
+            <Link href="#testimonials" className="text-sm font-medium text-muted-foreground hover:text-foreground">
+              Testimonials
+            </Link>
+            <div className="border-t border-border pt-4">
+              {isLoggedIn ? (
+                <Button asChild className="w-full bg-primary">
+                  <Link href="/dashboard">Go to Dashboard</Link>
+                </Button>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  <Button variant="outline" asChild className="w-full">
+                    <Link href="/sign-in">Sign In</Link>
+                  </Button>
+                  <Button asChild className="w-full bg-primary">
+                    <Link href="/sign-up">Get Started</Link>
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </details>
+    </div>
   )
 }
