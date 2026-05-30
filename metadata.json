@@ -1,0 +1,6 @@
+{
+  "name": "EcoFriend",
+  "description": "AI Smart Plantation Assistant to plant smarter, grow better, and live greener.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
